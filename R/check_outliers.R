@@ -1,4 +1,9 @@
-##' .. content for \description{} (no empty lines) ..
+##' Find potential outliers for measured traits: protein, oil, and moisture. 
+##' This data isn't used anymore for formatting the output but could still
+##' be useful for diagnosing potential bugs when applying formatting
+##' in the workbook step. Right now, the outliers are identified within
+##' the workbook creation step itself so refer to make_workbook to see how it is
+##' implemented
 ##'
 ##' .. content for \details{} ..
 ##'
@@ -27,9 +32,16 @@ check_outliers <- function(NIR_Cleaned) {
     }
   }
   
+  # Split the data following test and location so that outliers can be identified within each set. 
   NIR_Cleaned_split <- split(NIR_Cleaned, list(NIR_Cleaned$Test, NIR_Cleaned$Loc))
   
+  # Look into nesting/purr for this step. May not need to go through the split/loop 
+  # structure that I'm using here and elsewhere. What is important is that outliers
+  # are calculated within test/loc combinations but just grouping by these
+  # variables gave incorrect results. I'll have to come back and try something 
+  # in the future, but this code accomplishes what it needs to do for now. 
   for(i in 1:length(NIR_Cleaned_split)){
+    
     NIR_Cleaned_split[[i]] <- NIR_Cleaned_split[[i]] %>% 
       group_by(Test, Loc) %>%
       # Find potential outliers within each test
@@ -43,6 +55,7 @@ check_outliers <- function(NIR_Cleaned) {
              protein_var  = round(sd(protein_dry_basis, na.rm = TRUE), 3),
              moisture_var = round(sd(moisture, na.rm = TRUE), 3)) %>%
       ungroup()
+    
   }
 
   do.call(bind_rows, NIR_Cleaned_split)

@@ -8,10 +8,7 @@ make_workbook <- function(Outliers_Checked) {
 
   # Split the data based on test and location
   SplitData <- split(Outliers_Checked, list(Outliers_Checked$Test, Outliers_Checked$Loc))
-  
-  # A function to make a boxplot of oil and protein content with outliers labeled
-  
-  
+
   # Make the excel workbook
   wb <- createWorkbook()
   
@@ -36,19 +33,24 @@ make_workbook <- function(Outliers_Checked) {
       Q1 <- quantile(values, 0.25, na.rm = TRUE)
       Q3 <- quantile(values, 0.75, na.rm = TRUE)
       
+      # Calculate the IQR
       IQR <- (Q3 - Q1)
       
       Left  <- Q1 - (1.5*IQR)
       Right <- Q3 + (1.5*IQR)
       
+      # Expressions to be passed to excel at what qualifies an outlier (Less than 1.5*IQR or greater than 1.5*IQR)
       ExpressionLeft  <- paste0("<", Left)
       ExpressionRight <- paste0(">", Right) 
       
+      # Store these expressions in a list
       return(list(Left = ExpressionLeft, Right = ExpressionRight))
     }
     
+    # Get the outlier expressions for a given variable
     OutlierList <- Outlierfn(Dataset[, columnIndex])
     
+    # Apply "less than" outlier formatting to the column
     conditionalFormatting(wb    = workbook, 
                           sheet = SheetName, 
                           rows  = 2:(nrow(Dataset) + 1), 
@@ -56,6 +58,7 @@ make_workbook <- function(Outliers_Checked) {
                           rule  = OutlierList[[1]], 
                           style = Style)
     
+    # Apply "greater than" outlier formatting to the column
     conditionalFormatting(wb    = workbook, 
                           sheet = SheetName, 
                           rows  = 2:(nrow(Dataset) + 1), 
@@ -68,6 +71,7 @@ make_workbook <- function(Outliers_Checked) {
   # Make a workbook page for each test/location
   for(i in 1:length(SplitData)){
     
+    # Not all test/location combinations exist, move to the next list element if no data for a combination exists
     if(nrow(SplitData[[i]]) == 0){ next }
     
     # Format the test name and location to use it as the tab name in the workbook
@@ -77,27 +81,28 @@ make_workbook <- function(Outliers_Checked) {
     # Add a worksheet to the workbook using this name
     addWorksheet(wb, sheetName = TabName)
     
+    # # Format the moisture column
+    # OutlierFormat(Dataset     = SplitData[[i]], 
+    #               SheetName   = TabName,
+    #               workbook    = wb,
+    #               columnIndex = 11)
+    # 
+    # # The protein column
+    # OutlierFormat(Dataset     = SplitData[[i]], 
+    #               SheetName   = TabName,
+    #               workbook    = wb,
+    #               columnIndex = 12)
+    # 
+    # # ANd the oil column
+    # OutlierFormat(Dataset     = SplitData[[i]], 
+    #               SheetName   = TabName,
+    #               workbook    = wb,
+    #               columnIndex = 13)
     
-    
-    # Format the moisture column
-    OutlierFormat(Dataset     = SplitData[[i]], 
-                  SheetName   = TabName,
-                  workbook    = wb,
-                  columnIndex = 11)
-    
-    # The protein column
-    OutlierFormat(Dataset     = SplitData[[i]], 
-                  SheetName   = TabName,
-                  workbook    = wb,
-                  columnIndex = 12)
-    
-    # ANd the oil column
-    OutlierFormat(Dataset     = SplitData[[i]], 
-                  SheetName   = TabName,
-                  workbook    = wb,
-                  columnIndex = 13)
-    
-    # Rename columns for readability
+    # Rename columns for readability and remove the outlier indicator columns
+    # In previous versions of the script, I used these columns to apply formatting
+    # to the trait columns but elected to calculate the statistics for the outliers
+    # and apply formatting directly using the three functions above
     SplitData[[i]] <- SplitData[[i]] %>%
       rename(Moisture                = moisture,
              Protein                 = protein_dry_basis, 
@@ -109,12 +114,12 @@ make_workbook <- function(Outliers_Checked) {
              `Standard deviation of Oil`      = oil_var,
              `Standard deviation of Protein`  = protein_var,
              `Standard deviation of Moisture` = moisture_var) %>%
-      dplyr::select(-one_of(c("oil_outlier", "protein_outlier", "moisture_outlier")))
+      dplyr::select(-one_of(c("oil_outlier", "protein_outlier", "moisture_outlier", "Standard deviation of Moisture")))
     
     # Write the table to the worksheet
     writeDataTable(wb, TabName, SplitData[[i]])
     
-    # Add the general style to the data table
+    # Add the general style to the whole worksheet
     addStyle(wb,
              sheet      = TabName,
              style      = GeneralStyle,

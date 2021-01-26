@@ -6,10 +6,9 @@
 ##' @param Mian_NIR
 clean_Mian_NIR <- function(Mian_NIR) {
   
-  # Read in each of the files to a dataframe
+  # Read in each of the files in to a dataframe and store in a list
   NIRTables <- lapply(Mian_NIR, read_excel)
   
-  # "NIR files" is a list of the NIR exports. 
   # Define a function that can be applied to each list element to 
   # clean the data from the NIR export
   NIR_Table_Clean <- function(NIRTable){
@@ -27,7 +26,7 @@ clean_Mian_NIR <- function(Mian_NIR) {
     AllData <- bind_rows(HeaderRow, Measurements) %>% 
       row_to_names(1) %>%
       clean_names() %>%
-      # Rename columns then only keep the code, date, protein and oil measurements
+      # Rename columns then only keep the code, date, protein, oil, and moisture measurements
       rename(NIR_Code = product,
              Date     = x2019_a_whole_small) %>%
       select(NIR_Code, 
@@ -39,7 +38,7 @@ clean_Mian_NIR <- function(Mian_NIR) {
       separate(NIR_Code,
                into = c("Year", "Loc", "Test", "Genotype", "Code", "Plot", "Rep", "NIR_Number"),
                sep = "_") %>%
-      # Convert the date column to a proper date
+      # Convert the date column from an excel date number to an R date object
       mutate(Date = as.Date(as.numeric(Date), origin = "1899-12-30")) %>%
       mutate(Genotype = str_trim(Genotype)) %>%
       dplyr::select(Date, 
@@ -61,14 +60,16 @@ clean_Mian_NIR <- function(Mian_NIR) {
   # Apply this function to each NIR export, merge all files, and return the result
   Cleaned_NIR <- lapply(NIRTables, NIR_Table_Clean)
   
-  # Add file paths to each table (for checking)
+  # Add file paths to each table in case we need to go back and inspect the original files
   for(i in 1:length(Cleaned_NIR)){
     Cleaned_NIR[[i]]$FilePath <- Mian_NIR[[i]]  
   }
   
-  # The fielstem to be replaced in the filepath variable
+  # The file stem unique to my system to be replaced in the filepath variable
   FileBase <- "C:/Users/Jay/Desktop/Documents/R/Mian_2020/Data/NIR_Exports/"
   
+  # Bind all the dataframes together, conevrt columns to their proper formats,
+  # rearrange columns, sort the data, and format the file name column
   AllData <- do.call(bind_rows, Cleaned_NIR) %>% 
     mutate(Year              = as.numeric(Year), 
            Rep               = as.numeric(Rep),
@@ -96,6 +97,6 @@ clean_Mian_NIR <- function(Mian_NIR) {
     arrange(Test, Loc, Code, Rep) %>%
     mutate(FilePath = str_replace(FilePath, FileBase, ""))
   
+  # Exclude any rows where the test is missing and return the final data
   AllData[!(is.na(AllData$Test)), ]
-
 }
