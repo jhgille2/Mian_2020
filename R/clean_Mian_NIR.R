@@ -90,10 +90,10 @@ clean_Mian_NIR <- function(Mian_NIR) {
                   Rep, 
                   Plot, 
                   NIR_Number, 
-                  moisture, 
                   protein_dry_basis, 
                   oil_dry_basis,
-                  protein_plus_oil) %>%
+                  protein_plus_oil,
+                  moisture) %>%
     arrange(Test, Loc, Code, Rep) %>%
     mutate(FilePath = str_replace(FilePath, FileBase, ""))
   

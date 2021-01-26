@@ -6,7 +6,7 @@ Mian_NIR <- Mian_NIR[which(file_ext(Mian_NIR) == "xlsx")]
 the_plan <-
   drake_plan(
 
-    # Read in NIR exports and do some wrangling to 
+    # Read in NIR exports and do some data wrangling to 
     # "unwind" the NIR code and combine all files into a single dataframe
     NIR_Cleaned = clean_Mian_NIR(Mian_NIR), 
     
@@ -16,6 +16,16 @@ the_plan <-
     # Create a workbook from the NIR data with conditional formatting for the
     # different potential outliers
     OutputWorkbook = make_workbook(Outliers_Checked),
+    
+    ##### TODO #####
+    #
+    # Make seperate workbooks for different test categories
+    #   - HIF, LU, LP, LO-HP, Jay
+    #   - These are all the first characters before a space in the file names when
+    #     the Outliers_checked data is split. This can be used to programatically make a
+    #     list of workbooks from a list of dataframes
+    #
+    #################
     
     ### 
     #  My idea was to make some distribution plots that could be added to the workbook
