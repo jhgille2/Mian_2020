@@ -58,5 +58,40 @@ check_outliers <- function(NIR_Cleaned) {
     
   }
 
-  do.call(bind_rows, NIR_Cleaned_split)
+  AllData <- do.call(bind_rows, NIR_Cleaned_split)
+  
+  # SPlit this data following the Loc/Test
+  SplitData <- split(AllData, list(AllData$Test, AllData$Loc))
+  
+  # Remove any list elements with zero rows
+  SplitData <- SplitData[which(lapply(SplitData, nrow) > 0)]
+  
+  # This list will be split according to that "test type" the data belongs to
+  # like "LP", "LU", "HIF"...
+  # This part is a likely source of potential bugs though. I am getting this type from the test names
+  # themselves. Specifically, I assume that the test type can be found by taking the part of the test name
+  # that comes before the first space in the test name. This will fail if another character is used
+  # or if inconsistent test names are used, like if an underscore is used in place of a space in some of
+  # the names. For the current data, this does not seem to be an issue, but care should be taken if this
+  # code is used for data in the future. 
+  SplitNames     <- str_split(names(SplitData), " ") 
+  ShortTestNames <- lapply(SplitNames, function(x) x[[1]]) %>% unlist()
+  
+  UniqueTestNames <- unique(ShortTestNames)
+  
+  ResultList        <- vector("list", length = length(UniqueTestNames))
+  names(ResultList) <- UniqueTestNames
+  for(i in 1:length(ResultList)){
+    
+    # The name of the current test type
+    CurrentName <- names(ResultList)[[i]]
+    
+    # Get the elements of the split data list that belong to the current test type
+    # and put in the matching list element
+    ResultList[[CurrentName]] <- SplitData[which(ShortTestNames == CurrentName)]
+    
+  }
+  
+  # Return the final list
+  ResultList
 }

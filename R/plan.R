@@ -10,7 +10,9 @@ the_plan <-
     # "unwind" the NIR code and combine all files into a single dataframe
     NIR_Cleaned = clean_Mian_NIR(Mian_NIR), 
     
-    # Check for outliers within each test
+    # Check for outliers within each test and restructure
+    # Tthe dataframe into a list of dataframes
+    # separated by test type
     Outliers_Checked = check_outliers(NIR_Cleaned),
     
     # Create a workbook from the NIR data with conditional formatting for the
@@ -38,9 +40,28 @@ the_plan <-
     # PlotPaths = file_out(!!PlotNames),
     ###
     
-    # Save the excel workbook
-    ExportWorkbook = saveWorkbook(OutputWorkbook, 
-                                  file = file_out(!!paste0(here(), "/Exports/AllTables.xlsx")), 
-                                  overwrite = TRUE)
-
+    # Save the excel workbook 
+    # Need to look into if it's possible to do this programatically instead of maunally defining the 
+    # target files. Maybe something with branching?
+    ExportWorkbook_HIF = saveWorkbook(OutputWorkbook$HIF,
+                                      file = file_out(!!paste0(here(), "/Exports/Mian_2020_HIF.xlsx")),
+                                      overwrite = TRUE), 
+    
+    ExportWorkbook_Jay = saveWorkbook(OutputWorkbook$Jay,
+                                      file = file_out(!!paste0(here(), "/Exports/Mian_2020_Jay.xlsx")),
+                                      overwrite = TRUE), 
+    
+    ExportWorkbook_LP = saveWorkbook(OutputWorkbook$LP,
+                                      file = file_out(!!paste0(here(), "/Exports/Mian_2020_LP.xlsx")),
+                                      overwrite = TRUE), 
+    
+    ExportWorkbook_LU = saveWorkbook(OutputWorkbook$LU,
+                                      file = file_out(!!paste0(here(), "/Exports/Mian_2020_LU.xlsx")),
+                                      overwrite = TRUE), 
+    
+    ExportWorkbook_LO_HP = saveWorkbook(OutputWorkbook$`LO-HP`,
+                                      file = file_out(!!paste0(here(), "/Exports/Mian_2020_LO-HP.xlsx")),
+                                      overwrite = TRUE)
+    
+    
 )
