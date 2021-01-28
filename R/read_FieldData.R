@@ -158,7 +158,7 @@ read_FieldData <- function(Mian_FieldFiles) {
     mutate(det_indet = str_replace(det_indet, "det/indet", ""),
            Note1     = str_replace(Note1, "Note 1", ""),
            Note2     = str_replace(Note2, "Note 2", ""),
-           Herbicide = str_replace(herbicide, "herbicide", ""))
+           herbicide = str_replace(herbicide, "herbicide", ""))
   
   # The data with only one copy
   AllFieldData <- CopyCount %>%
@@ -176,8 +176,8 @@ read_FieldData <- function(Mian_FieldFiles) {
     mutate(det_indet = str_replace(det_indet, "det/indet", ""),
            Note1     = str_replace(Note1, "Note 1", ""),
            Note2     = str_replace(Note2, "Note 2", ""),
-           Herbicide = str_replace(herbicide, "herbicide", ""))
+           herbicide = str_replace(herbicide, "herbicide", ""))
   
   
-  return(list(Coalesced = Coalesced_copies, NonCoalesced = AllFieldData))
+  return(bind_rows(Coalesced_copies, AllFieldData))
 }
