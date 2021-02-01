@@ -13,7 +13,7 @@ Mian_NIR <- list.files(paste0(here(), "/Data/NIR_Exports"), full.names = TRUE)
 Mian_NIR <- Mian_NIR[which(file_ext(Mian_NIR) == "xlsx")]
 
 # The input field data
-Mian_FieldFiles <- list.files(paste0(here(), "/Data/Field Data"), recursive = TRUE, full.names = TRUE)
+Mian_FieldFiles <- list.files(paste0(here(), "/Data/2020_Mian_Test Data"), recursive = TRUE, full.names = TRUE)
 
 # The input lead sheets
 Mian_Leadsheets <- list.files(paste0(here(), "/Data/Leadsheets"), recursive = TRUE, full.names = TRUE)
@@ -26,10 +26,10 @@ the_plan <-
 
     # Read in NIR exports and do some data wrangling to 
     # "unwind" the NIR code and combine all files into a single dataframe
-    NIR_Cleaned = clean_Mian_NIR(Mian_NIR), 
+    NIR_Cleaned = clean_Mian_NIR(Mian_NIR, takeLatestMeasurement = TRUE), 
     
     # Check for outliers within each test and restructure
-    # Tthe dataframe into a list of dataframes
+    # the dataframe into a list of dataframes
     # separated by test type
     Outliers_Checked = check_outliers(NIR_Cleaned),
     
@@ -52,24 +52,21 @@ the_plan <-
     LeadSheets = read_Leadsheets(Mian_Leadsheets),
     
     # Check that the field data read in match what is expected, and then
-    # check for poential outliers due to errors in recording, or measurments
+    # check for poential outliers due to errors in recording, or measurements
     FieldDataValidation = validate_FieldData(FieldData, ExpectedTraitPlotCount = LeadSheets$AllTraits_byPlot),
     
     # Get the field data's structure to one that better matched that of the NIR data
     ProcessedFieldData  = process_FieldData(FieldData),
     
-    
     # Merge field data with NIR
-    FullData = combine_Field_NIR(ProcessedFieldData, Outliers_Checked),
-    
-    
+    FullData = combine_Field_NIR(FieldData, Outliers_Checked),
     
     ## Section: Export
     ##################################################
     
     # Create a workbook from the NIR data with conditional formatting for the
     # different potential outliers
-    OutputWorkbook = make_workbook(Outliers_Checked),
+    OutputWorkbook = make_workbook(FullData_reduced = FullData$ReducedList),
     
     # Save the excel workbooks 
     # Need to look into if it's possible to do this programatically instead of manually defining the 
@@ -78,9 +75,9 @@ the_plan <-
                                       file = file_out(!!paste0(here(), "/Exports/Mian_2020_HIF.xlsx")),
                                       overwrite = TRUE), 
     
-    ExportWorkbook_Jay = saveWorkbook(OutputWorkbook$Jay,
-                                      file = file_out(!!paste0(here(), "/Exports/Mian_2020_Jay.xlsx")),
-                                      overwrite = TRUE), 
+    # ExportWorkbook_Jay = saveWorkbook(OutputWorkbook$Jay,
+    #                                   file = file_out(!!paste0(here(), "/Exports/Mian_2020_Jay.xlsx")),
+    #                                   overwrite = TRUE), 
     
     ExportWorkbook_LP = saveWorkbook(OutputWorkbook$LP,
                                       file = file_out(!!paste0(here(), "/Exports/Mian_2020_LP.xlsx")),

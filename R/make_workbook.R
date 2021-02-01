@@ -4,15 +4,15 @@
 ##'
 ##' @title
 ##' @param Outliers_Checked
-make_workbook <- function(Outliers_Checked) {
+make_workbook <- function(FullData_reduced) {
   
-  WorkbookList        <- vector('list', length = length(Outliers_Checked))
-  names(WorkbookList) <- names(Outliers_Checked)
+  WorkbookList        <- vector('list', length = length(FullData_reduced))
+  names(WorkbookList) <- names(FullData_reduced)
   
   for(j in 1:length(WorkbookList)){
 
     # Get the current split data
-    SplitData <- Outliers_Checked[[j]]
+    SplitData <- FullData_reduced[[j]]
     
     # Make the excel workbook
     wb <- createWorkbook()
@@ -109,17 +109,9 @@ make_workbook <- function(Outliers_Checked) {
       # to the trait columns but elected to calculate the statistics for the outliers
       # and apply formatting directly using the three functions above
       SplitData[[i]] <- SplitData[[i]] %>%
-        rename(Moisture                = moisture,
-               Protein                 = protein_dry_basis, 
+        rename(Protein                 = protein_dry_basis, 
                Oil                     = oil_dry_basis, 
-               `Protein + Oil`         = protein_plus_oil,
-               # `Oil Outlier`           = oil_outlier, 
-               # `Protein Outlier`       = protein_outlier,
-               # `Moisture Outlier`      = moisture_outlier,
-               `Standard deviation of Oil`      = oil_var,
-               `Standard deviation of Protein`  = protein_var,
-               `Standard deviation of Moisture` = moisture_var) %>%
-        dplyr::select(-one_of(c("oil_outlier", "protein_outlier", "moisture_outlier", "Standard deviation of Moisture")))
+               `Protein + Oil`         = protein_plus_oil)
       
       # Write the table to the worksheet
       writeDataTable(wb, TabName, SplitData[[i]])

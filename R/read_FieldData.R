@@ -146,19 +146,22 @@ read_FieldData <- function(Mian_FieldFiles) {
   # This returns a dataframe for one row for each Test/Loc combination
   # that previously had multiple files. The coalesced dataframe is stored
   # in the "Coalesced_data" column
-  Coalesced_copies <- MultipleCopies %>% 
-    group_by(Test, Loc) %>%
-    nest() %>%
-    ungroup() %>%
-    mutate(FieldData = map(data, MergeYield)) %>%
-    mutate(FieldData = map(FieldData, Standardize_Columns)) %>%
-    select(FieldData) %>%
-    unnest(FieldData) %>% 
-    arrange(Test, Loc, Code, Rep) %>%
-    mutate(det_indet = str_replace(det_indet, "det/indet", ""),
-           Note1     = str_replace(Note1, "Note 1", ""),
-           Note2     = str_replace(Note2, "Note 2", ""),
-           herbicide = str_replace(herbicide, "herbicide", ""))
+  if(nrow(MultipleCopies) > 0){
+    Coalesced_copies <- MultipleCopies %>% 
+      group_by(Test, Loc) %>%
+      nest() %>%
+      ungroup() %>%
+      mutate(FieldData = map(data, MergeYield)) %>%
+      mutate(FieldData = map(FieldData, Standardize_Columns)) %>%
+      select(FieldData) %>%
+      unnest(FieldData) %>% 
+      arrange(Test, Loc, Code, Rep) %>%
+      mutate(det_indet = str_replace(det_indet, "det/indet", ""),
+             Note1     = str_replace(Note1, "Note 1", ""),
+             Note2     = str_replace(Note2, "Note 2", ""),
+             herbicide = str_replace(herbicide, "herbicide", ""))
+  }
+
   
   # The data with only one copy
   AllFieldData <- CopyCount %>%
@@ -178,6 +181,15 @@ read_FieldData <- function(Mian_FieldFiles) {
            Note2     = str_replace(Note2, "Note 2", ""),
            herbicide = str_replace(herbicide, "herbicide", ""))
   
-  
-  return(bind_rows(Coalesced_copies, AllFieldData))
+  if(exists("Coalesced_copies")){
+    bind_rows(Coalesced_copies, AllFieldData) %>%
+      mutate(AgScore = coalesce(AgScore, Rouf_Score),
+             Loc     = toupper(Loc)) %>%
+      select(-Rouf_Score)
+  }else{
+    AllFieldData %>%
+      mutate(AgScore = coalesce(AgScore, Rouf_Score),
+             Loc     = toupper(Loc)) %>%
+      select(-Rouf_Score)
+  }
 }

@@ -50,7 +50,8 @@ read_Leadsheets <- function(Mian_Leadsheets) {
     colnames(Table2) <- colnames(Table1) <- colnames(Disposition_Special) <- colnames(MGData) <- c("Component", "Value")
     ExperimentTable  <- bind_rows(Table1, Table2, Disposition_Special, MGData) %>% 
       mutate(Test      = TestName,
-             Component = str_replace(Component, "#", "") %>% str_replace(., ":", "")) %>%
+             Component = str_replace(Component, "#", "") %>% str_replace(., ":", ""),
+             nLocs     = length(TestLocs)) %>%
       pivot_wider(names_from = Component, values_from = Value) %>%
       clean_names()
     
@@ -102,6 +103,9 @@ read_Leadsheets <- function(Mian_Leadsheets) {
   # Add a total plot column to the experiment data
   AllExperiments %>% 
     mutate(total_plots = as.numeric(reps) * as.numeric(total_entries)) -> AllExperiments
+  
+  # Add a column to show how many plots the test has in total across all locations
+  AllExperiments$CumulativePlots <- AllExperiments$n_locs * AllExperiments$total_plots
   
   # Add reps, total entries, and total plots to the trait data
   AllExperiments %>%
