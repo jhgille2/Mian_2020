@@ -1,7 +1,8 @@
 # Mian_2020
 Data processing for 2020 Mian soybean trials.
 
-## Main directory files (the important ones)
+## Main directory files 
+*(Just the important ones)*
 - \_drake.R: Setup for drake workflow. Run this first. 
 - packages.R: The packages used in the workflow
 
