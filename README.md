@@ -14,9 +14,11 @@ Data processing for 2020 Mian soybean trials.
 - ErrorSumamry.xlsx: A record of NIR measurements which do not match the expected number of measurements for a given genotype, eighter too few or too many indicating missing data or repeated measurements. 
 
 ## R
-**This folder holds the R scripts used in the processing workflow**
+**This folder holds the R scripts used in the processing workflow**  
 *Check function descriptions for specific details about their purpose*
 - plan.R: The main drake plan. 
 - Others: Components of the plan
 
 ## Other files
+- \_drake.R: Setup for drake workflow. Run this first. 
+- packages.R: The packages used in the workflow
