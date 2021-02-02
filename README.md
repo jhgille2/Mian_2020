@@ -16,7 +16,7 @@ A [drake](https://github.com/ropensci/drake) workflow for processing the 2020 Mi
 ## Exports
 **This folder holds the workflow output data sets.**
 - Mian_2020_[Test category].xlsx: An excel workbook with the merged data for a set of tests belonging to some test category. The workflow has a sheet for each test in the category. 
-- ErrorSumamry.xlsx: A record of NIR measurements which do not match the expected number of measurements for a given genotype, either too few or too many indicating missing data or repeated measurements. 
+- ErrorSummary.xlsx: A record of NIR measurements which do not match the expected number of measurements for a given genotype, either too few or too many indicating missing data or repeated measurements. 
 
 ## R
 **This folder holds the R scripts used in the processing workflow**  
