@@ -1,5 +1,5 @@
 # Mian 2020 test processing
-A drake workflow for processing the 2020 Mian soybean trials.
+A [drake](https://github.com/ropensci/drake) workflow for processing the 2020 Mian soybean trials. Potentially could also be used for similar data in the future.
 
 ## Main directory files 
 *(Just the important ones)*
