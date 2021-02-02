@@ -1,5 +1,5 @@
 # Mian_2020
-Data processing for 2020 Mian soybean trials.
+A drake workflow for processing the 2020 Mian soybean trials.
 
 ## Main directory files 
 *(Just the important ones)*
