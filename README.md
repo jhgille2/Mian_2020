@@ -1,4 +1,4 @@
-# Mian_2020
+# Mian 2020 test processing
 A drake workflow for processing the 2020 Mian soybean trials.
 
 ## Main directory files 
