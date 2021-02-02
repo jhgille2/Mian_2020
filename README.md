@@ -15,3 +15,8 @@ Data processing for 2020 Mian soybean trials.
 
 ## R
 **This folder holds the R scripts used in the processing workflow**
+*Check function descriptions for specific details about their purpose*
+- plan.R: The main drake plan. 
+- Others: Components of the plan
+
+## Other files
