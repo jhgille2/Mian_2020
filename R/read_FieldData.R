@@ -179,7 +179,8 @@ read_FieldData <- function(Mian_FieldFiles) {
     mutate(det_indet = str_replace(det_indet, "det/indet", ""),
            Note1     = str_replace(Note1, "Note 1", ""),
            Note2     = str_replace(Note2, "Note 2", ""),
-           herbicide = str_replace(herbicide, "herbicide", ""))
+           herbicide = str_replace(herbicide, "herbicide", "")) %>%
+    dplyr::filter(Genotype != "V14-3508 (4L)")
   
   if(exists("Coalesced_copies")){
     bind_rows(Coalesced_copies, AllFieldData) %>%

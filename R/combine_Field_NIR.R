@@ -29,15 +29,21 @@ combine_Field_NIR <- function(FieldData, Outliers_Checked) {
                   HT, 
                   Yield, 
                   SDWT, 
-                  SQ, 
+                  SQ,
+                  Pro13, 
+                  Oil13,
+                  PO13,
                   protein_dry_basis, 
                   oil_dry_basis,
                   protein_plus_oil,
                   Note1, 
-                  Note2) -> AllData_reduced
+                  Note2) %>%
+    arrange(Test, Loc, Code, Rep) %>%
+    mutate(across(everything(), ~replace_na(.x, "."))) %>%
+    dplyr::filter(Genotype != "V14-3508 (4L)") -> AllData_reduced
   
   # SPlit this data following the Loc/Test
-  SplitData <- split(AllData_reduced, list(AllData_reduced$Test, AllData_reduced$Loc))
+  SplitData <- split(AllData_reduced, list(AllData_reduced$Test))
   
   # Remove any list elements with zero rows
   SplitData <- SplitData[which(lapply(SplitData, nrow) > 0)]

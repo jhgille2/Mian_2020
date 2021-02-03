@@ -79,7 +79,11 @@ clean_Mian_NIR <- function(Mian_NIR, takeLatestMeasurement = TRUE) {
            protein_dry_basis = as.numeric(protein_dry_basis),
            oil_dry_basis     = as.numeric(oil_dry_basis),
            protein_plus_oil  = protein_dry_basis + oil_dry_basis,
-           Loc               = toupper(Loc))  %>%
+           Pro13             = round(protein_dry_basis * 0.87, 2),
+           Oil13             = round(oil_dry_basis * 0.87, 2),
+           PO13              = round(protein_plus_oil * 0.87, 2),
+           Loc               = toupper(Loc),
+           Test              = str_replace(Test, "LU 5E", "LU 5 Early"))  %>%
     dplyr::select(FilePath,
                   Date, 
                   Test, 
@@ -90,6 +94,9 @@ clean_Mian_NIR <- function(Mian_NIR, takeLatestMeasurement = TRUE) {
                   Rep, 
                   Plot, 
                   NIR_Number, 
+                  Pro13,
+                  Oil13,
+                  PO13, 
                   protein_dry_basis, 
                   oil_dry_basis,
                   protein_plus_oil,

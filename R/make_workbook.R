@@ -80,8 +80,11 @@ make_workbook <- function(FullData_reduced) {
       if(nrow(SplitData[[i]]) == 0){ next }
       
       # Format the test name and location to use it as the tab name in the workbook
-      CurrentNames <- str_split(names(SplitData)[[i]], "\\.")[[1]]
-      TabName      <- paste(CurrentNames, collapse = " - ")
+      # CurrentNames <- str_split(names(SplitData)[[i]], "\\.")[[1]]
+      # TabName      <- paste(CurrentNames, collapse = " - ")
+      # 
+
+      TabName <- names(SplitData)[[i]]
       
       # Add a worksheet to the workbook using this name
       addWorksheet(wb, sheetName = TabName)
@@ -103,18 +106,43 @@ make_workbook <- function(FullData_reduced) {
       #               SheetName   = TabName,
       #               workbook    = wb,
       #               columnIndex = 13)
-      
+
       # Rename columns for readability and remove the outlier indicator columns
       # In previous versions of the script, I used these columns to apply formatting
       # to the trait columns but elected to calculate the statistics for the outliers
       # and apply formatting directly using the three functions above
       SplitData[[i]] <- SplitData[[i]] %>%
-        rename(Protein                 = protein_dry_basis, 
-               Oil                     = oil_dry_basis, 
-               `Protein + Oil`         = protein_plus_oil)
+        dplyr::select(Test, 
+                      Year, 
+                      Loc,
+                      Genotype, 
+                      Code, 
+                      Rep,
+                      Plot, 
+                      MD, 
+                      HT, 
+                      Yield, 
+                      SDWT, 
+                      SQ, 
+                      Pro13,
+                      Oil13,
+                      PO13, 
+                      protein_dry_basis, 
+                      oil_dry_basis, 
+                      protein_plus_oil,
+                      FC,
+                      PC,
+                      Note1) %>%
+        rename(Pro        = protein_dry_basis, 
+               Oil        = oil_dry_basis, 
+               PO         = protein_plus_oil,
+               Yieldg     = Yield, 
+               `Pro 13%M` = Pro13,
+               `Oil 13%M` = Oil13) %>%
+        arrange(as.numeric(Code), Loc, Rep)
       
       # Write the table to the worksheet
-      writeDataTable(wb, TabName, SplitData[[i]])
+      writeData(wb, TabName, SplitData[[i]])
       
       # Add the general style to the whole worksheet
       addStyle(wb,
