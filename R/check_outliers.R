@@ -7,7 +7,8 @@
 ##'
 ##' .. content for \details{} ..
 ##'
-##' @title
+##'
+##' @title check_outliers
 ##' @param NIR_Cleaned
 check_outliers <- function(NIR_Cleaned) {
   

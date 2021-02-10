@@ -25,7 +25,12 @@ the_plan <-
     ##################################################
 
     # Read in NIR exports and do some data wrangling to 
-    # "unwind" the NIR code and combine all files into a single dataframe
+    # split up the NIR code and combine all files into a single dataframe
+    # takeLatestMeasurement is a simple QC fix for duplicated NIR measurements. 
+    # When set to TRUE, only the most recent NIR measurement for a given sample is kept.
+    # a more robust treatment of these samples would be good, and probably merits it's own
+    # step in the workflow. In practice, for the current data, keeping only the latest
+    # measurement was fine as repeated measurements did not differ by much. 
     NIR_Cleaned = clean_Mian_NIR(Mian_NIR, takeLatestMeasurement = TRUE), 
     
     # Check for outliers within each test and restructure
