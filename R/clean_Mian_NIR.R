@@ -105,7 +105,7 @@ clean_Mian_NIR <- function(Mian_NIR, takeLatestMeasurement = TRUE) {
     mutate(FilePath = str_replace(FilePath, FileBase, ""))
   
   # Exclude any rows where the test is missing and return the final data
-  AllData <- AllData[!(is.na(AllData$Test)), ]
+  AllData <- distinct(AllData[!(is.na(AllData$Test)), ])
   
   # Some NIR samples were measured twice. A simple way of eliminating duplicated measurements is to 
   # just take the most recent sample.
@@ -115,7 +115,7 @@ clean_Mian_NIR <- function(Mian_NIR, takeLatestMeasurement = TRUE) {
       top_n(1, Date) %>%
       ungroup() %>%
       group_by(NIR_Number) %>%
-      top_n(1) %>%
+      sample_n(1) %>%
       ungroup()
   }else{
     AllData

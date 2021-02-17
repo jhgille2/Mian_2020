@@ -9,8 +9,22 @@ combine_Field_NIR <- function(FieldData, Outliers_Checked) {
 
   # get a single dataframe with all the NIR data
   AllNIR <- do.call(bind_rows, lapply(Outliers_Checked, function(x) do.call(bind_rows, x)))
+  AllNIR <- unique(AllNIR)
+  
+  # The field data for LP 5E - PLY was corrected so that the field data matches the NIR by plot number, 
+  # Separate this data out first and then join by plot number
+  LP5EPly_FieldData   <- FieldData %>% dplyr::filter(Loc == "PLY", Test == "LP 5E")
+  LP5EPly_NIR         <- AllNIR %>%
+                              dplyr::filter(Loc == "PLY", Test == "LP 5E") %>%
+                              dplyr::select(-one_of(c("Genotype", "Loc", "Test", "Code", "Rep", "Year")))
+  
+  FieldData <- FieldData %>% dplyr::filter(!(Loc == "PLY" & Test == "LP 5E"))
   
   AllData <- left_join(FieldData, AllNIR, by = c("Genotype", "Loc", "Test", "Code", "Plot", "Rep", "Year"))
+  
+  LP5EData <- left_join(LP5EPly_FieldData, LP5EPly_NIR, by = "Plot")
+  
+  AllData <- bind_rows(AllData, LP5EData)
   
   AllData %>%
     dplyr::select(ID,
