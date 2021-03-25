@@ -13,7 +13,11 @@ RequiredPackages <- c("conflicted",
                       "openxlsx",
                       "ggrepel",
                       "ggplot2",
-                      "cowplot")
+                      "cowplot",
+                      "emmeans",
+                      "lme4",
+                      "magrittr",
+                      "purrr")
 
 new.packages <- RequiredPackages[!(RequiredPackages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -31,8 +35,13 @@ library(tools)
 library(janitor)
 library(skimr)
 library(openxlsx)
+library(magrittr)
+library(purrr)
 
 
 library(ggrepel)
 library(ggplot2)
 library(cowplot)
+
+library(emmeans)
+library(lme4)

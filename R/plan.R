@@ -3,7 +3,7 @@
 ## Script purpose: The plan for the data preparation
 ## workflow for the 2020 Mian data. I have however tried to
 ## make the steps fairly general in case of future use. 
-## Date: 2021-01-26
+## Last Edited: 2021-02-24
 ## Author: Jay Gillenwater
 ##################################################
 
@@ -65,6 +65,24 @@ the_plan <-
     
     # Merge field data with NIR
     FullData = combine_Field_NIR(FieldData, Outliers_Checked),
+    
+    # Make LSMean tables from the combined data
+    # First, define which traits you want means for
+    Phenos = c("Yield",
+               "SDWT",
+               "SQ",
+               "Pro13",
+               "Oil13",
+               "PO13",
+               "protein_dry_basis",
+               "oil_dry_basis",
+               "protein_plus_oil"),
+    
+    # Then calculate the LSMeans for each trait
+    LSMeanData = calculate_LSMeans(Data = FullData, MeasureVars = Phenos),
+    
+    # Create excel workbooks for these means
+    LSMeanWorkbooks = make_LSMeanWorkbooks(LSMeanData),
     
     ## Section: Export
     ##################################################
